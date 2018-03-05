@@ -1,16 +1,38 @@
 # Introduction to Advanced Git
 
-If you use git, your knowledge lies somewhere on a scale I have defined below.
+This introduction is aimed towards those who have a working knowledge of git but wish to learn more about the git file structure how it works behind the scenes.
 
-## 5 Levels of git knowledge
-
-1. I know almost nothing about git except maybe a few commands and roughly what they do.
-2. I know the basics but nothing of how git works behind the scenes. I will ask for help if anything goes wrong
-3. I know my way around and am comfortable googling for an answer if something goes wrong. I know a little bit about how git works under the hood.
-4. I know how git works on a deeper level and can work out how to fix problems myself. I use google mainly as a reference when I forget commands.
-5. I know basically everything there is to know and have set up advanced workflows.
-
-This introduction is aimed at those who fit into levels 2 and 3.
+- [Introduction to Advanced Git](#introduction-to-advanced-git)
+  * [Confusing Git](#confusing-git)
+    + [Some fun git error messages and quirks](#some-fun-git-error-messages-and-quirks)
+  * [Key Value Pairs](#key-value-pairs)
+  * [File structure](#file-structure)
+  * [Objects](#objects)
+  * [Refs](#refs)
+  * [Index / Staging area](#index--staging-area)
+  * [What is going on when I...](#what-is-going-on-when-i)
+    + [Checkout](#checkout)
+    + [Commit](#commit)
+    + [Merge](#merge)
+    + [Rebase](#rebase)
+    + [Various others](#various-others)
+      - [Branch](#branch)
+      - [Tag](#tag)
+  * [Reflog](#reflog)
+  * [Losing Work](#losing-work)
+    + [Unreachable commits](#unreachable-commits)
+    + [Force](#force)
+    + [Deleting Git Files](#deleting-git-files)
+  * [Cool Bits and Pieces](#cool-bits-and-pieces)
+    + [Pretty log](#pretty-log)
+    + [Bisect](#bisect)
+    + [What has changed](#what-has-changed)
+    + [A peek into git blobs](#a-peek-into-git-blobs)
+    + [Quick amend](#quick-amend)
+    + [Revert/Reverse](#revertreverse)
+    + [Reset](#reset)
+    + [RM](#rm)
+    + [Blame](#blame)
 
 ## Confusing Git
 
@@ -162,6 +184,17 @@ So to summarise, a tracked file is one that appears in the index. A staged file 
 
 Now that we know how the file structure is working for us under the hood, let's take a step back and look at the commit hierarchy and how git manipulates it for us as we run various commands.
 
+### Checkout
+
+This one is very straightforward.
+
+1. If a known branch name is given, find commit hash of branch.
+2. Update the index to match the tree associated with the target commit
+3. Update contents of working directory to those of the target commit.
+4. Update HEAD to point to new branch (or target commit if hash is given).
+
+The only tricky part concerns updating the index but is simple when you realise we already have a history of what the index looked like in the form of our commit trees.
+
 ### Commit
 
 The first fundamental building block of a git history is the commit. This one isn't that difficult but let's break it down.
@@ -218,17 +251,11 @@ This does mean that we will need to manually stitch the commits back together if
 
 The practical upshot of this is that the history will read as one line of continuous commits. 
 
-### Various others
+### Branch and Tag
 
-There are various other commands that modify our git history, far too many to mention. The three most essential have been mentioned above. All others tend to be more geared towards editing the contents of the object files or are variants of those mentioned already. 
+There are various other commands that modify our git history, far too many to mention. The most essential have been mentioned above. All others tend to be more geared towards editing the contents of the object files or are variants of those mentioned already.
 
-Some notable mentions:
-
-#### Checkout
-
-1. If a known branch name is given, find commit hash of branch.
-2. Update contents of working directory to those of the target commit.
-3. Update HEAD to point to new branch (or target commit if hash is given).
+Two more examples:
 
 #### Branch
 
@@ -239,8 +266,6 @@ Some notable mentions:
 
 1. Create a new tag in tags
 2. Point tag at HEAD commit.
-
-Notice how tags and branches are basically the same.
 
 ## Reflog
 
@@ -292,7 +317,7 @@ git gc --prune=now
 
 This is one of the very few ways that it is possible to lose committed work. The other being the use of the --force flag when pushing.
 
-### --Force
+### Force
 
 Another possibly more egregious example of commit erasure in git is through the notorious `git push --force`. This command is strongly discouraged and with good reason. It will forcibly push your changes to the remote and update the branch to point at your newest commit. 
 
@@ -378,6 +403,24 @@ Lets you reword your most recent commit.
 Creates a new commit with the opposite change set as the target commit. Effectively this reverses this commit but leaves a record of both in the history. 
 
 This feels clunky but is much better than any alternative if your code is already pushed and shared with others.
+
+### Reset
+
+`git reset --hard <hash>`
+
+You will probably have used this one before but probably not for its intended purpose. This command will make the current branch point to the target commit. It will also reset the index and working directory to the specified hash. 
+
+People typically use this for the side effect. By not supplying a hash, as with almost all git commends you implicitly target HEAD. The current branch will point at HEAD (effectively a no-op) and clear the working copy and index to the last commit.
+
+You can use this command with --soft to not affect the working copy or index which effectively lets you move a branch pointer to point at a different commit.
+
+### RM
+
+`git rm --cached <file>`
+
+This will remove a file from just the index effectively untracking it.
+
+You can also omit the --cached flag to remove the file from both the index and the working copy.
 
 ### Blame
 
