@@ -15,7 +15,7 @@ This introduction is aimed towards those who have a working knowledge of git but
     + [Commit](#commit)
     + [Merge](#merge)
     + [Rebase](#rebase)
-    + [Various others](#various-others)
+    + [Branch and Tag](#branch-and-tag)
       - [Branch](#branch)
       - [Tag](#tag)
   * [Reflog](#reflog)
@@ -32,6 +32,8 @@ This introduction is aimed towards those who have a working knowledge of git but
     + [Revert/Reverse](#revertreverse)
     + [Reset](#reset)
     + [RM](#rm)
+    + [Pull with rebase](#pull-with-rebase)
+    + [Add patch](#add-patch)
     + [Blame](#blame)
 
 ## Confusing Git
@@ -98,6 +100,8 @@ A lot of the folders aren't hugely interesting or important.
  - Description is used by gitweb. Old and mainly unused by devs.
  - Hooks stores hook scripts. Let's not discuss them for now.
  - Info stores things like file exclusions that you don't want committed via the usual .gitignore
+
+For more information on the less important stuff, check out https://git-scm.com/docs/gitrepository-layout
 
 Objects and Refs is where it starts getting interesting
 
@@ -175,6 +179,8 @@ We can build up a picture of the differences between the working copy of files, 
 `git diff` Will show the differences between the index and the working copy of files. In other words, unstaged changes.
 
 `git diff HEAD` Will show the difference between the working copy and HEAD (or any other given hash). This is probably what most people will use the diffing tool for.
+
+This page summarises it quite well: http://365git.tumblr.com/post/474079664/whats-the-difference-part-1
 
 An important point to note is that untracked files (files git has never heard of) won't show up in any of these diffs.
 
@@ -372,7 +378,7 @@ You might want to remove --all or set up multiple aliases with and without it.
 
 `git bisect run <script> <args>`
 
-We can use git bisect to identify a breaking commit. Internally does this by doing a binary search between the last commit you mark as being 'good' and the first that you mark as being 'bad'. (Not supplying a hash defaults to HEAD)
+We can use git bisect to identify a breaking commit. Internally git does this by doing a binary search between the last commit you mark as being 'good' and the first that you mark as being 'bad'. (Not supplying a hash defaults to HEAD)
 
 Git will keep checking out new commits until you mark one as good and the following as bad. At this point the bisect process will end and HEAD will be pointed at the 'bad' commit.
 
@@ -421,6 +427,28 @@ You can use this command with --soft to not affect the working copy or index whi
 This will remove a file from just the index effectively untracking it.
 
 You can also omit the --cached flag to remove the file from both the index and the working copy.
+
+### Pull with rebase
+
+`git pull --rebase`
+
+By default, git will fetch and merge when you run `git pull`. By passing the --rebase flag, git will pull the changes and rebase your branch on top of it.
+
+This will help you maintain a linear git history but do be careful about doing this after having already pushed. You will need to do a --force-with-lease push later.
+
+### Add patch
+
+`git add --patch <file>`
+
+or just 
+
+`git add -p <file>`
+
+First let me say **this is not creating git patches at all**. This command, although confusingly named, allows you to add only specific parts or 'chunks' of each file you pass it. 
+
+Git will work through your changeset showing you the diff and will ask if you want to add that chunk. Git will actually give you a lot of options. The important ones are y (yes), n (no) and q (quit)
+
+See https://git-scm.com/book/en/v2/Git-Tools-Interactive-Staging to see what the other options do.
 
 ### Blame
 
