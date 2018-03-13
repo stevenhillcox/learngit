@@ -84,13 +84,13 @@ Git makes a bunch of folders in .git/
 
 If we look at a new project we have the following structure:
 
-HEAD
-config
-description
-hooks
-info
-objects
-refs
+- HEAD
+- config
+- description
+- hooks
+- info
+- objects
+- refs
 
 The bare minimum needed to be a git repo is HEAD, an objects folder and a refs folder.
 A lot of the folders aren't hugely interesting or important.
