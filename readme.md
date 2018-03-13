@@ -329,7 +329,7 @@ Another possibly more egregious example of commit erasure in git is through the 
 
 This is basically the same as copy-pasting your local repo on top of whatever is on the remote. This is a destructive operation, removing any work that has already been pushed by someone else. If they try to push afterwards they will likely get the nasty error message we saw earlier.
 
-Many people recognise the need for the --force command, for example when rebasing on top of changes added by others after you have already initially pushed. They will sometimes use phrases like "Never use --force _unless you know what you are doing_". 
+Many people recognise the need for the --force command, for example when rebasing on top of changes added by others after you have already initially pushed. They will sometimes use phrases like "Never use --force _unless you know what you are doing_".
 
 This is still wrong. Unless you are deliberately trying to erase history, **there is no reason to ever use the --force option**.
 
@@ -427,6 +427,12 @@ You can use this command with --soft to not affect the working copy or index whi
 This will remove a file from just the index effectively untracking it.
 
 You can also omit the --cached flag to remove the file from both the index and the working copy.
+
+### Find Unreachable Commits
+
+`git fsck --unreachable --no-reflogs`
+
+This will print out all commits that aren't reachable using the current index. Basically anything printed out here is in danger of being garbage collected when its entry leaves the reflog.
 
 ### Pull with rebase
 
