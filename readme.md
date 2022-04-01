@@ -247,11 +247,14 @@ The steps we take are as follows:
 1. Step back through the current branch until we find a common ancestor of both our HEAD and target commit. For each commit, create a patch and store them in order.
 2. Checkout the target commit.
 3. For each patch:
-    * Apply on top of the target. (now current) 
+    * Apply on top of the target, pointing head to the new commit. (now current) 
     * Prompt user for fixes if we run into conflicts. 
     * If possible we keep the commit message from the patch.
+4. Point the current branch to the final commit if we are not in a detached head state
 
-Git gives us interesting messages explaining this process using words like 'rewinding' and 'replaying' but in simple terms, we are just taking the current branch and recommitting it on top of our target commit.
+Git gives us interesting messages explaining this process using words like 'rewinding' and 'replaying' but in simple terms, we are just taking the currentt branch and recommitting it on top of our target commit.
+
+One curiosity here is that we are creating new commits as we go along that just happen to look a lot like our old now abandoned branch. The old commits are still here but no longer referenced. (More on this later)
 
 This does mean that we will need to manually stitch the commits back together if there discrepancies. Git will open up vim (or whatever you have configured) if this happens and you will have to manually create a resolution commit.
 
